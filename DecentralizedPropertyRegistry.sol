@@ -42,8 +42,9 @@ contract DecentralizedPropertyRegistry {
         _;
     }
 
-    modifier idIfExists(address _id) {
-        require(personIdExists[_id], "el usuario No existe");
+    modifier IdsPeopleTransactionExist(address _buyerId, address _sellerId) {
+        require(personIdExists[_buyerId], "El comprador no se encuentra registrado");
+        require(personIdExists[_sellerId], "El vendedor no se encuentra registrado");
         _;
     }
 
@@ -122,8 +123,7 @@ contract DecentralizedPropertyRegistry {
     }
 
     function addTransactionLogic(Transaction memory _transaction) internal 
-    idIfExists(_transaction.buyerId) 
-    idIfExists(_transaction.sellerId) 
+    IdsPeopleTransactionExist(_transaction.buyerId, _transaction.sellerId) 
     deedIfExists(_transaction.propertyDeed)
     validateSufficientBalanceBuyer(_transaction.buyerId, _transaction.transactionValue)  {
         updateBuyerBalance(_transaction.buyerId, _transaction.transactionValue);
