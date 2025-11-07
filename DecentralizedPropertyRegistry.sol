@@ -42,6 +42,11 @@ contract DecentralizedPropertyRegistry {
         _;
     }
 
+    modifier idPersonIfExist(address _idPerson) {
+        require(personIdExists[_idPerson], "El propietario de la propiedad no se encuentra registrado");
+        _;
+    }
+
     modifier IdsPeopleTransactionExist(address _buyerId, address _sellerId) {
         require(personIdExists[_buyerId], "El comprador no se encuentra registrado");
         require(personIdExists[_sellerId], "El vendedor no se encuentra registrado");
@@ -83,7 +88,7 @@ contract DecentralizedPropertyRegistry {
 
     function addProperty(uint256 _id, address _ownerId, string memory _location, uint256 _price) public {
         Property memory newProperty = Property(_id, _ownerId, _location, _price);
-        addPropertyogic(newProperty);
+        addPropertyLogic(newProperty);
     }
 
     function addTransaction(uint256 _propertyId, address _sellerId , address _buyerId, uint256 _amount) public {
@@ -115,7 +120,7 @@ contract DecentralizedPropertyRegistry {
         emit PersonAdded(_person.id, _person.name, _person.balance);
     }
 
-    function addPropertyogic(Property memory _property) internal  deedNotExist(_property.deed) {
+    function addPropertyLogic(Property memory _property) internal  deedNotExist(_property.deed) idPersonIfExist(_property.ownerId)  {
         properties.push(_property);
         propertyDeedToIndex[_property.deed] = properties.length - 1;
         propertyDeedExists[_property.deed] = true;
